@@ -1,5 +1,5 @@
 {
-	"name" : "just-core/auth-page",
+	"name" : "just-core/auth/page",
 	"description" : "PHP Enterprise HA Framework",
 	"license" : "GNU",
 	"keywords" : [
