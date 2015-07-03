@@ -71,10 +71,11 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 	* @return this->serviceResponse  
 	*/
 	public function authenticate($params = null){
+		echo __METHOD__.__LINE__.'$params<pre>['.var_export($params, true).']</pre>'.'<br>'; 
 		if(!isset($params["FILTER_TYPE"])){
 			return false;
 		}
-		switch(strtolower($params["FILTER_TYPE"])){
+		switch(strtoupper($params["FILTER_TYPE"])){
 			case "WHITELIST":
 				$this->authenticateWHITELIST($params);
 				break;
@@ -85,7 +86,7 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 				return false;
 				break;
 		}
-		#echo __METHOD__.__LINE__.'$this->serviceResponse<pre>['.var_export($this->serviceResponse, true).']</pre>'.'<br>'; 
+		echo __METHOD__.__LINE__.'$this->serviceResponse<pre>['.var_export($this->serviceResponse, true).']</pre>'.'<br>'; 
 		if(isset($this->serviceResponse["status"]) && 'OK' == $this->serviceResponse["status"]){
 			return true;
 		}
@@ -110,93 +111,40 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 	* @return this->serviceResponse  
 	*/
 	public function authenticateWHITELIST($args){
-		
-		#echo __METHOD__.__LINE__.'$args<pre>['.var_export($args, true).']</pre>'.'<br>'; 
-		
-		$this->init($args);
-		$this->DAO = new DAO();
-		#$this->DAO = new DAO($args);
-		$searchCriteria = array(
-			'DSN' => 'BLACKWATCH',
-			'table' => 'client_user',
-			'pk_field' => 'client_user_pk',
-			'foundation' => true,
-			'search' => array(
-				'email' => $args["email"],
-				#'password' => $args["password"],
-			),
-		);
-		#$this->DAO->initialize($args["DSN"], $args["table"], true);
-		$this->DAO->initializeBySearch($searchCriteria);
-		$stored_hash = $this->DAO->get($searchCriteria["table"], 'password');
-		#echo __METHOD__.__LINE__.'$password<pre>['.var_export($stored_hash, true).']</pre>'.'<br>'.PHP_EOL; 
-
-		if(true ===  \password_verify($args['password'], $stored_hash)){
-			$result['status'] = 'OK';
-			$result['user_id'] = $this->DAO->get($searchCriteria["table"], $searchCriteria["pk_field"]);
-			$this->serviceResponse = $result;
-		}else{
-			$result['error'] = 'failed to authenticate';
-			$this->serviceResponse = $result;
-		}
-		
-		
-		#echo __METHOD__.__LINE__.'$this->serviceResponse<pre>['.var_export($this->serviceResponse, true).']</pre>'.'<br>'.PHP_EOL; 
-		#echo __METHOD__.__LINE__.'$this->DAO<pre>['.var_export($this->DAO, true).']</pre>'.'<br>'.PHP_EOL; 
-		return $this->serviceResponse;
-	}
-	
-	
-	/**
-	* DESCRIPTOR: an example namespace call 
-	* @param param 
-	* @return return  
-	*/
-	public function authenticateUserSession($args){
-		/*
-		echo __METHOD__.__LINE__.'$args<pre>['.var_export($args, true).']</pre>'.'<br>'.PHP_EOL; 
-		echo __METHOD__.__LINE__.'$_SESSION<pre>['.var_export($_SESSION, true).']</pre>'.'<br>'.PHP_EOL; 
+		$result = array();
+		/**
+		* do a quick check first
 		*/
 		if(
-			!isset($_SESSION) 
+			true === in_array($_SERVER["REQUEST_URI"],$args['ALLOW'])
 			||
-			(
-				!isset($_SESSION['user_id']) 
-				|| 
-				!is_numeric($_SESSION['user_id'])
-			)
-			|| 
-			!isset($_SESSION['user_email'])
+			true === in_array($_SERVER["PHP_SELF"],$args['ALLOW'])
 		){
-			$result['error'] = 'failed to authenticate';
-			$this->serviceResponse = $result;
-			return $this->serviceResponse;
-		}
-		/*
-		$_SESSION['user_id'] = $authCheck["user_id"];
-		$_SESSION['user_email'] = $_POST["email"];
-		*/
-		$this->DAO = new DAO();
-		$searchCriteria = array(
-			'DSN' => 'BLACKWATCH',
-			'table' => 'client_user',
-			'pk_field' => 'client_user_pk',
-			'foundation' => true,
-			'search' => array(
-				'email' => $_SESSION['user_email'],
-				#'password' => $args["password"],
-			),
-		);
-		$this->DAO->initializeBySearch($searchCriteria);
-		$user_id = $this->DAO->get($searchCriteria["table"], $searchCriteria["pk_field"]);
-		#echo __METHOD__.__LINE__.'$user_id['.$user_id.'] $_SESSION["user_id"]['.$_SESSION['user_id'].']</pre>'.'<br>'; 
-		if($user_id  == $_SESSION['user_id']){
 			$result['status'] = 'OK';
 			$this->serviceResponse = $result;
 			return $this->serviceResponse;
 		}
+		
+		/**
+		* then more thorough
+		*/
+		foreach($args['ALLOW'] as $key => $value){
+			if(
+				$value == strstr($_SERVER["REQUEST_URI"], $value)
+				||
+				$value == strstr($_SERVER["PHP_SELF"], $value)
+			){
+				$result['status'] = 'OK';
+				$this->serviceResponse = $result;
+				return $this->serviceResponse;
+			}
+		}
+
 		return false;
 	}
+	
+	
+
 	/**
 	* DESCRIPTOR: an example namespace call 
 	* @param param 
