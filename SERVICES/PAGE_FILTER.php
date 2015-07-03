@@ -71,7 +71,7 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 	* @return this->serviceResponse  
 	*/
 	public function authenticate($params = null){
-		echo __METHOD__.__LINE__.'$params<pre>['.var_export($params, true).']</pre>'.'<br>'; 
+		#echo __METHOD__.__LINE__.'$params<pre>['.var_export($params, true).']</pre>'.'<br>'; 
 		if(!isset($params["FILTER_TYPE"])){
 			return false;
 		}
@@ -86,7 +86,7 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 				return false;
 				break;
 		}
-		echo __METHOD__.__LINE__.'$this->serviceResponse<pre>['.var_export($this->serviceResponse, true).']</pre>'.'<br>'; 
+		#echo __METHOD__.__LINE__.'$this->serviceResponse<pre>['.var_export($this->serviceResponse, true).']</pre>'.'<br>'; 
 		if(isset($this->serviceResponse["status"]) && 'OK' == $this->serviceResponse["status"]){
 			return true;
 		}
