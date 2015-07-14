@@ -20,12 +20,15 @@ if(true !== $AUTH_HARNESS->register('JCORE\SERVICE\AUTH\PAGE_FILTER')){
 * 
 */
 $AUTH_TEST = true; //add your hook here
+/*
 $AUTH_TEST = $AUTH_HARNESS->authenticate(
-	'SERVICE\AUTH\LOGIN_SERVICE',
+	'JCORE\SERVICE\AUTH\LOGIN_SERVICE',
 	array(
 		'AUTH_TYPE' => 'session'
 	)
 );
+*/
+
 /**
 * pages not to lock out
 * login, signup, logout
@@ -33,7 +36,7 @@ $AUTH_TEST = $AUTH_HARNESS->authenticate(
 */
 $PAGE_HOOKS = $GLOBALS["CONFIG_MANAGER"]->getSetting('AUTH','PAGE_FILTER_ALLOW_PUBLIC');
 
-$PAGE_TEST = $AUTH_HARNESS->authenticate('JCORE\SERVICE\AUTH\PAGE_FILTER2',$PAGE_HOOKS);
+$PAGE_TEST = $AUTH_HARNESS->authenticate('JCORE\SERVICE\AUTH\PAGE_FILTER',$PAGE_HOOKS);
 #######################################
 #echo ' restrictive mode...pass the white list first, then check credentials<br>'.PHP_EOL;
 if(true === $PAGE_TEST){

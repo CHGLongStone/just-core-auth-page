@@ -5,31 +5,19 @@
  * 
  * 
  * @author	Jason Medland<jason.medland@gmail.com>
- * @package	JCORE
- * @subpackage	AUTH
+ * @package	JCORE\SERVICE\AUTH 
  */
- 
 
- 
-/**
- * Class PHPASS
- *
- * @package JCORE\AUTH
-*/
 namespace JCORE\SERVICE\AUTH;
 use JCORE\TRANSPORT\SOA\SOA_BASE as SOA_BASE; //if it extends SOA_BASE it should be a a *.service.php class
 use JCORE\DAO\DAO as DAO;
 use JCORE\AUTH\AUTH_INTERFACE as AUTH_INTERFACE;
 
 
-#use JCORE\SERVICE\CRUD\CRUD as CRUD;
-##### -^ update this 
-#use SERVICE\AUTH\PHPASS as PHPASS;
-
 /**
  * Class PAGE_FILTER
  *
- * @package SERVICE\AUTH 
+ * @package JCORE\SERVICE\AUTH 
 */
 class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{ 
 	/** 
