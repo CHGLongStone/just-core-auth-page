@@ -49,7 +49,7 @@ if(true === $PAGE_TEST){
 		echo __METHOD__.__LINE__.'$_SESSION<pre>['.var_export($_SESSION, true).']</pre>'.PHP_EOL; 
 		exit;
 		*/
-		header('Location: http://'.$_SERVER['SERVER_NAME'].'/login.php');
+		header('Location: http://'.$_SERVER['HTTP_HOST'].'/login.php');
 		exit;
 	}
 }
