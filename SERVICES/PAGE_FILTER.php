@@ -71,6 +71,9 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 			case "BLACKLIST":
 				$this->authenticateBLACKLIST($params);
 				break;
+			case "TOKEN":
+				$this->authenticateTOKEN($params);
+				break;
 			default:
 				return false;
 				break;
@@ -130,6 +133,116 @@ class PAGE_FILTER extends SOA_BASE implements AUTH_INTERFACE{
 		}
 
 		return false;
+	}
+	/**
+	* DESCRIPTOR: an example namespace call 
+	* 
+	* @args array 
+	* @return this->serviceResponse  
+	*/
+	public function authenticateBLACKLIST($args){
+		$result = array();
+		/**
+		* do a quick check first
+		*/
+		if(
+			true === !in_array($_SERVER["REQUEST_URI"],$args['DENY'])
+			||
+			true === !in_array($_SERVER["PHP_SELF"],$args['DENY'])
+		){
+			$result['status'] = 'OK';
+			$this->serviceResponse = $result;
+			return $this->serviceResponse;
+		}
+		
+		/**
+		* then more thorough
+		*/
+		foreach($args['DENY'] as $key => $value){
+			if(
+				$value == strstr($_SERVER["REQUEST_URI"], $value)
+				||
+				$value == strstr($_SERVER["PHP_SELF"], $value)
+			){
+				$result['status'] = 'OK';
+				$this->serviceResponse = $result;
+				return $this->serviceResponse;
+			}
+		}
+
+		return false;
+	}
+	/**
+	* DESCRIPTOR: an example namespace call 
+	* 
+	* @args array 
+	* @return this->serviceResponse  
+	*/
+	public function authenticateTOKEN($args){
+		$result = array();
+		
+		/*
+		* A crude example below for the TOKEN_HAYSTACK
+		* 
+		* 
+		* 
+			$W =  md5 ( 'what' ); 	//4a2028eceac5e1f4d252ea13c71ecec6
+			$T =  md5 ( 'the' ); 	//8fc42c6ddf9966db3b09e84365034357
+			$F =  md5 ( 'fuck' ); 	//99754106633f94d350db34d548d6091a
+			//all together now 
+			$WTF =  md5 ( $W.$T.$F ); //d41d8cd98f00b204e9800998ecf8427e
+			
+			$args["TOKEN"] = array(
+				//'TOKEN_SCOPE' => '_REQUEST', //_POST,_GET,_REQUEST,args ...
+				//'TOKEN_NAME' => 'PUBLIC_TOKEN',
+				'TOKEN_VALUE' => 'TOKEN_VALUE',
+				'TOKEN_HAYSTACK' => array( 
+					// a filtered result set prepared by whatever (extended class etc.) 
+					// is calling this service method 
+					$W,
+					$T,
+					$W,
+					$WTF,
+				),
+			);
+		*/
+		
+		/**
+		* do a basic arg validation check first
+		*/		
+		if(!isset($args["TOKEN"]) && !is_array($args["TOKEN"])){
+			return false;
+		}
+		/**
+		* do a quick check first
+		*/		
+		if(
+			true === in_array($args["TOKEN"]["TOKEN_VALUE"],$args['TOKEN']['TOKEN_HAYSTACK'])
+		){
+			/**
+			* then more thorough
+			foreach($args['ALLOW'] as $key => $value){
+				if(
+					$value == strstr($_SERVER["REQUEST_URI"], $value)
+					||
+					$value == strstr($_SERVER["PHP_SELF"], $value)
+				){
+					$result['status'] = 'OK';
+					$this->serviceResponse = $result;
+					return $this->serviceResponse;
+				}
+			}
+			*/
+			$result['status'] = 'OK';
+			$this->serviceResponse = $result;
+			return $this->serviceResponse;
+		}else{
+			return false;
+		}
+		
+
+
+		
 	}
 	
 	
