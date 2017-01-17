@@ -1,11 +1,11 @@
 <?php 
-session_start();
 /**
-* 
+* Example of a procedural load harness 
 * 
 * 
 * 
 */
+session_start();
 $AUTH_HARNESS = new JCORE\AUTH\AUTH_HARNESS();
 if(true !== $AUTH_HARNESS->register('JCORE\SERVICE\AUTH\PAGE_FILTER')){
 	die('failed to load PAGE_FILTER');
